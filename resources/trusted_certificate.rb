@@ -2,7 +2,7 @@
 # Cookbook:: trusted_certicate
 # resource:: trusted_certicate
 #
-# Copyright:: 2015-2017, Chef Software, Inc.
+# Copyright:: 2015-2018, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ method_alias :content, :certificate
 
 action :create do
   execute 'update trusted certificates' do
-    command platform_family?('debian', 'suse') ? 'update-ca-certificates' : 'update-ca-trust extract'
+    command update_cert_command
     action :nothing
   end
 
@@ -40,7 +40,7 @@ end
 
 action :delete do
   execute 'update trusted certificates' do
-    command platform_family?('debian', 'suse') ? 'update-ca-certificates' : 'update-ca-trust extract'
+    command update_cert_command
     action :nothing
   end
 
@@ -51,6 +51,12 @@ action :delete do
 end
 
 action_class do
+  # @return [String] the platform specific command to update certs
+  def update_cert_command
+    platform_family?('debian', 'suse') ? 'update-ca-certificates' : 'update-ca-trust extract'
+  end
+
+  # @return [String] the platform specific path to certs
   def certificate_path
     case node['platform_family']
     when 'debian'
