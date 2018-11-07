@@ -18,9 +18,10 @@
 #
 
 property :certificate_name, String, name_property: true
-property :content, String, required: true
+property :certificate, String, required: true
 
-provides :trusted_certificate
+# support the legacy content property name
+method_alias :content, :certificate
 
 action :create do
   execute 'update trusted certificates' do
